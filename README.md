@@ -1,3 +1,5 @@
+![](https://github.com/C4dynamics/ode/blob/main/rocketsim%203.gif)
+
 The starting point to any dynamical system, namely a system that evolves in time, is the mathematical representation of the evolution in time. This representation is called the model of the system.
 
 The mathematical representation of most systems is a set of differential equations. To solve this set of equations, matlab, python, and other programs, provide tools which allow to write the equations and to solve them within the desired times.
