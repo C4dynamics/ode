@@ -365,11 +365,55 @@ classdef rocket_dynamics < matlab.mixin.Copyable
                 displaylim = [-0.5 1.5 -0.8 0.8];
                 rtail = [0 0];
                 rhead = lr * [cos(theta(t)) sin(theta(t))];
+
+                filename = 'rocketsim.gif';
+                
+                
                 plot(displaylim(1 : 2), [0 0], 'm', 'LineWidth', 1)
                 hold on
-                plot([rtail(1) rhead(1)], [rtail(2) rhead(2)], '-*', 'LineWidth', 20)
+                % 
+                % canard
+                %%
+                rcanard = lr * 3 / 4;
+                canard_center = rcanard * [cos(theta(t)) sin(theta(t))];
+                th_canardl = theta(t) + 20 * pi / 180;
+                th_canardr = theta(t) - 20 * pi / 180;
+                canard_left = rcanard * 1.05 * [cos(th_canardl) sin(th_canardl)];
+                canard_right = rcanard * 1.05 * [cos(th_canardr) sin(th_canardr)];
+                plot([canard_center(1), canard_left(1)], [canard_center(2), canard_left(2)], 'g', 'LineWidth', 5)
+                plot([canard_center(1), canard_right(1)], [canard_center(2), canard_right(2)], 'g', 'LineWidth', 5)
+                 
+                % 
+                % tail fins
+                %%
+                rfins = lr / 5;
+                fins_center = rfins * [cos(theta(t)) sin(theta(t))];
+                th_finsl = theta(t) + 90 * pi / 180;
+                th_finsr = theta(t) - 90 * pi / 180;
+                fins_left = rfins * 1.05 * [cos(th_finsl) sin(th_finsl)];
+                fins_right = rfins * 1.05 * [cos(th_finsr) sin(th_finsr)];
+                plot([fins_center(1), fins_left(1)], [fins_center(2), fins_left(2)], 'b', 'LineWidth', 12)
+                plot([fins_center(1), fins_right(1)], [fins_center(2), fins_right(2)], 'b', 'LineWidth', 12)
+
+                % x values              y values 
+                plot([rtail(1) rhead(1)], [rtail(2) rhead(2)], 'k', 'LineWidth', 50)
+%                 plot(rtail(1), rtail(2), '>k', 'LineWidth', 20)
+                plot(rhead(1), rhead(2), 'ok', 'LineWidth', 10 ...
+                        , 'MarkerFaceColor', [1 0.5 0], 'MarkerSize', 40);
                 axis(displaylim);
                 drawnow
+                
+                %%
+                  frame = getframe(1);
+                  im = frame2im(frame);
+                  [imind, cm] = rgb2ind(im, 256);
+                  if t == 1;
+                      imwrite(imind, cm, filename, 'gif', 'Loopcount', inf);
+                  else
+                      imwrite(imind, cm, filename, 'gif', 'WriteMode', 'append');
+                  end
+                %%
+                
                 hold off
             end
             
