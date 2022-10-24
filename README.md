@@ -31,6 +31,7 @@ Plots the properties of the system in the time of simulation.
 rckt.ranimate();
 
 Animates the motion of the system in the time of simulation. 
+gif edited with: https://ezgif.com/cut/ezgif-4-1e68375c6e.gif
 
 # ode45
 # dynamical systems

@@ -358,19 +358,29 @@ classdef rocket_dynamics < matlab.mixin.Copyable
         end
         
         function ranimate(obj)
-            figure
+            figure('color', [0.4 0 0.4])
+%             axis off
             theta = cumtrapz(obj.q) * obj.dt;
-            for t = 1 : 10 : length(theta)
-                lr = 1; 
-                displaylim = [-0.5 1.5 -0.8 0.8];
-                rtail = [0 0];
-                rhead = lr * [cos(theta(t)) sin(theta(t))];
-
-                filename = 'rocketsim.gif';
-                
-                
+            filename = 'rocketsim.gif';
+            lr =  3 / 4; 
+            bklr = 1 / 4;
+            displaylim = [-0.5 1.5 -0.8 0.8];
+            rtail = [0 0];
+            ax = gca;
+            set(ax, 'visible', 'off');
+            
+            for t = 1 : 10 : length(theta) %400% 
                 plot(displaylim(1 : 2), [0 0], 'm', 'LineWidth', 1)
-                hold on
+                hold(ax, 'on')
+                set(ax, 'visible', 'off');
+                
+                %
+                % edges
+                %% 
+                rhead = lr * [cos(theta(t)) sin(theta(t))];
+                theta_tail = theta(t) + pi / 2;
+                rtail2 = bklr * [-sin(theta_tail) cos(theta_tail)];
+
                 % 
                 % canard
                 %%
@@ -380,26 +390,29 @@ classdef rocket_dynamics < matlab.mixin.Copyable
                 th_canardr = theta(t) - 20 * pi / 180;
                 canard_left = rcanard * 1.05 * [cos(th_canardl) sin(th_canardl)];
                 canard_right = rcanard * 1.05 * [cos(th_canardr) sin(th_canardr)];
-                plot([canard_center(1), canard_left(1)], [canard_center(2), canard_left(2)], 'g', 'LineWidth', 5)
-                plot([canard_center(1), canard_right(1)], [canard_center(2), canard_right(2)], 'g', 'LineWidth', 5)
+                plot(ax, [canard_center(1), canard_left(1)], [canard_center(2), canard_left(2)], 'g', 'LineWidth', 5)
+                plot(ax, [canard_center(1), canard_right(1)], [canard_center(2), canard_right(2)], 'g', 'LineWidth', 5)
                  
                 % 
                 % tail fins
                 %%
-                rfins = lr / 5;
-                fins_center = rfins * [cos(theta(t)) sin(theta(t))];
-                th_finsl = theta(t) + 90 * pi / 180;
-                th_finsr = theta(t) - 90 * pi / 180;
-                fins_left = rfins * 1.05 * [cos(th_finsl) sin(th_finsl)];
-                fins_right = rfins * 1.05 * [cos(th_finsr) sin(th_finsr)];
-                plot([fins_center(1), fins_left(1)], [fins_center(2), fins_left(2)], 'b', 'LineWidth', 12)
-                plot([fins_center(1), fins_right(1)], [fins_center(2), fins_right(2)], 'b', 'LineWidth', 12)
+                rfins = bklr * 4 / 5;
+                fins_center = rfins * [-sin(theta_tail) cos(theta_tail)];
+                th_finsl = theta_tail + 45 * pi / 180;
+                th_finsr = theta_tail - 45 * pi / 180;
+                fins_left = rfins * 2 * [-sin(th_finsl) cos(th_finsl)];
+                fins_right = rfins * 2 * [-sin(th_finsr) cos(th_finsr)];
+                plot(ax, [fins_center(1), fins_left(1)], [fins_center(2), fins_left(2)], 'b', 'LineWidth', 12)
+                plot(ax, [fins_center(1), fins_right(1)], [fins_center(2), fins_right(2)], 'b', 'LineWidth', 12)
 
-                % x values              y values 
-                plot([rtail(1) rhead(1)], [rtail(2) rhead(2)], 'k', 'LineWidth', 50)
-%                 plot(rtail(1), rtail(2), '>k', 'LineWidth', 20)
-                plot(rhead(1), rhead(2), 'ok', 'LineWidth', 10 ...
-                        , 'MarkerFaceColor', [1 0.5 0], 'MarkerSize', 40);
+                %
+                % edges
+                %%
+                plot(ax, [rtail(1) rhead(1)], [rtail(2) rhead(2)], 'k', 'LineWidth', 50, 'Color',[0.960784316062927 0.921568632125854 0.921568632125854])
+                plot(ax, rhead(1), rhead(2), 'ok', 'LineWidth', 10, 'MarkerFaceColor', [1 0.5 0], 'MarkerSize', 40, 'Color',[0.960784316062927 0.921568632125854 0.921568632125854]);
+                plot(ax, [rtail2(1) rtail(1)], [rtail2(2) rtail(2)], 'k', 'LineWidth', 50, 'Color',[0.960784316062927 0.921568632125854 0.921568632125854])
+
+                
                 axis(displaylim);
                 drawnow
                 
@@ -414,7 +427,8 @@ classdef rocket_dynamics < matlab.mixin.Copyable
                   end
                 %%
                 
-                hold off
+                hold(ax, 'off')
+%                 hold off
             end
             
         end
